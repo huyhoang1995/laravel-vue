@@ -1,0 +1,28 @@
+*{
+	margin: 0;
+	padding: 0;
+}
+.deviceAddNew>button{
+	float: right;
+}
+.col-md-3.deviceAddNew {
+    float: right;
+}
+.total{
+	border: 1px solid black;
+	margin-left: 15px;
+	margin-right: 15px;
+	height: 35px;
+}
+.total>p {
+    font-size: 15px;
+    line-height: 35px;
+    margin-left: 5px;
+}
+ul.pagination.device_paginate {
+    float: right;
+}
+.device_panel{
+	margin-right: 15px;
+	margin-left: 15px;
+}
