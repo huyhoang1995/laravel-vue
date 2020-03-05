@@ -8,11 +8,11 @@ import serviceClinic from './components/clinic/ServiceComponent';
 import patientClinic from './components/clinic/PatientComponent';
 import patientDetailClinic from './components/clinic/PatientDetailComponent';
 import patientChartDetail from './components/clinic/PatientChartDetailComponent';
-import jitsiComponent from './components/JitsiComponent.vue';
 
 import ChatComponent from "./components/Item/ChatComponent.vue";
 import LoginChatComponent from "./components/LoginChatComponent.vue";
 import JitsiLoginComponent from './components/JitsiLoginComponent.vue';
+// import jitsiComponent from './components/JitsiComponent.vue';
 
 export default [
 	{
@@ -20,11 +20,16 @@ export default [
 		component: ChatComponent,
 		name: 'example'
 	},
-	{
-		path: '/jitsiComponent',
-		component: jitsiComponent,
-		name: 'jitsiComponent'
-	},
+	// {
+	// 	path: '/jitsiComponent',
+	// 	component: jitsiComponent,
+	// 	name: 'jitsiComponent'
+	// },
+	// {
+	// 	path: '/jitsiComponent?nameRoom=:nameRoom',
+	// 	component: jitsiComponent,
+	// 	name: 'jitsiComponent'
+	// },
 	{
 		path: '/jitsiLogin',
 		component: JitsiLoginComponent,

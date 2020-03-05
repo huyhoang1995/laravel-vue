@@ -14,6 +14,15 @@
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/loginJitsi', function () {
+    return view('loginJitsi');
+});
+Route::get('/videoJitsi', function () {
+    return view('videoCall');
+});
+Route::get('/test', function () {
+    return view('test');
+});
 
 
 // Route::get('/', function () {

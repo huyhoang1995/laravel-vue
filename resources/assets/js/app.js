@@ -104,10 +104,26 @@ const app = new Vue({
     router,
     i18n,
     store: store,
+    data:{
+        return:{
+            hello:'hello'
+        }
+    },
     components: {
         'my-login-component': LoginChatComponent,
         'avatar-component': AvatarComponent,
     }
 });
+
+// const app2 = new Vue({
+//     el: '#app2',
+//     router,
+//     i18n,
+//     store: store,
+//     components: {
+//         'my-login-component': LoginChatComponent,
+//         'avatar-component': AvatarComponent,
+//     }
+// });
 
 
