@@ -55,6 +55,7 @@ Route::group(['prefix' => 'rest', 'middleware' => ['web']], function () {
     Route::post('/item', 'Rest\ItemCtrl@insertItem');
     Route::post('/item/{id}', 'Rest\ItemCtrl@updateItem');
     Route::delete('/item/{id}', 'Rest\ItemCtrl@deleteItem');
+    Route::get('/startNofify', 'Rest\ItemCtrl@startNofify');
 
     // matrix
     Route::get('/getCLientServer', 'Rest\MatrixCtrl@getCLientServer');

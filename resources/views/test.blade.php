@@ -104,6 +104,11 @@
             -moz-box-shadow: 0px 0px 5px 6px rgba(191,185,191,1) !important;
             box-shadow: 0px 0px 5px 6px rgba(191,185,191,1) !important;
         }
+        .modalCall{
+            -webkit-animation-duration: 1.2s !important;
+            duration:1.2s !important;
+            transition-duration: 2s !important;
+        }
 	</style>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
@@ -123,6 +128,16 @@
         <div class="participant-overview"></div>
 
     </div>
+
+        <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="/__/firebase/7.9.3/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="/__/firebase/7.9.3/firebase-analytics.js"></script>
+
+    <!-- Initialize Firebase -->
+    <script src="/__/firebase/init.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
     <!-- <script src="{{ url('') }}/strophe/strophe.js"></script>

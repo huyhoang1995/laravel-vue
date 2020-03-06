@@ -177,5 +177,10 @@ class ItemCtrl extends Controller
         $this->itemModel->find($id)->delete();
         return response()->json(['status' => true]);
     }
+
+    public function startNofify()
+    {
+        return response()->json(['status' => true]);
+    }
 }
 

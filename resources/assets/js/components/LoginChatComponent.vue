@@ -78,6 +78,7 @@ let nameRoom = ""
 let isVideo = true;
 
 let isHand = true;
+
 window.changeViewParticipant = function(id){
     const tracks = remoteTracks[id];
 
@@ -450,15 +451,15 @@ export default {
             if (track.getType() === 'video') {
 
                 $('.participant-overview').append(
-                    `<div class="video-call-small ${participant} hello">
-                        <i class="fa fa-microphone-slash icon-slash-micro hide-class" aria-hidden="true"></i>
-                        <i class="fa fa-hand-paper-o icon-hand ${participant}hand hide-class" aria-hidden="true"></i>
-                        <div class="video-box-participant background-black"  onclick="changeViewParticipant('${participant}')">
-                            <div class="video-over-layout overlay-background">
-                                <video autoplay='1' style="width:100%; " id='${participant}video${idx}'/>
+                        `<div class="video-call-small ${participant} hello">
+                            <i class="fa fa-microphone-slash icon-slash-micro hide-class" aria-hidden="true"></i>
+                            <i class="fa fa-hand-paper-o icon-hand ${participant}hand hide-class" aria-hidden="true"></i>
+                            <div class="video-box-participant background-black"  onclick="changeViewParticipant('${participant}')">
+                                <div class="video-over-layout overlay-background">
+                                    <video autoplay='1' style="width:100%; " id='${participant}video${idx}'/>
+                                </div>
                             </div>
-                        </div>
-                    </div>`
+                        </div>`
                 );
                
             } else {
