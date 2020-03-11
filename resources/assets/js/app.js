@@ -94,9 +94,16 @@ const router = new VueRouter({ routes })
 // vuex store
 import { store } from "./libs/store/store";
 import LoginChatComponent from "./components/LoginChatComponent.vue";
+import VideoChatComponent from "./components/VideoChatComponent.vue";
 
 import AvatarComponent from './components/AvatarComponent.vue';
 
+
+// vue socket
+
+
+import openSocket from 'socket.io-client';
+Vue.prototype.$socket = openSocket('http://localhost:3003');
 
 
 const app = new Vue({
@@ -104,26 +111,18 @@ const app = new Vue({
     router,
     i18n,
     store: store,
-    data:{
-        return:{
-            hello:'hello'
+    data: {
+        return: {
+            hello: 'hello'
         }
     },
     components: {
         'my-login-component': LoginChatComponent,
+        'video-chat-component': VideoChatComponent,
         'avatar-component': AvatarComponent,
     }
 });
 
-// const app2 = new Vue({
-//     el: '#app2',
-//     router,
-//     i18n,
-//     store: store,
-//     components: {
-//         'my-login-component': LoginChatComponent,
-//         'avatar-component': AvatarComponent,
-//     }
-// });
+
 
 

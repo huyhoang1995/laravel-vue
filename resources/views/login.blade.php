@@ -42,7 +42,10 @@
     <script src="{{ url('/js/app.js')}}"></script>
     @includeif('partial._default_js')
     @includeif('partial._js')
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
+    <script>
+        var socket = io('http://localhost:3003');
+    </script>
 </body>
 
 </html>

@@ -121,7 +121,8 @@
         <div>
          
             <div>
-                <my-login-component ></my-login-component>
+                <video-chat-component></video-chat-component>
+                {{--  <my-login-component ></my-login-component>  --}}
             </div>
         </div>
         <div class="clearfix"></div>

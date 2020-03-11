@@ -46,11 +46,9 @@
     
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-i18n/dist/vue-i18n.js"></script>
-
     
 
 </body>
 <script>
-    
 </script>
 </html>

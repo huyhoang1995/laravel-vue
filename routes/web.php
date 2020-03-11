@@ -29,9 +29,9 @@ Route::get('/test', function () {
 //     return view('welcome');
 // })->name('index')->middleware('myAuth');
 
-// Route::get('/login', function () {
-//     return view('login');
-// })->name('login');
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
 
 // Route::get('/pdf', function () {
 //     return view('myPdfFile');

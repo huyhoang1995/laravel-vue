@@ -13,7 +13,7 @@ require('dotenv').config();
  */
 mix.setResourceRoot(process.env.APP_URL);
 mix.js('resources/assets/js/app.js', 'public/js')
-   .sass('resources/assets/sass/app.scss', 'public/css');
+    .sass('resources/assets/sass/app.scss', 'public/css');
 mix.copyDirectory('node_modules/font-awesome/fonts', 'public/fonts/font-awesome');
 mix.webpackConfig({
     resolve: {
@@ -24,4 +24,9 @@ mix.webpackConfig({
             '@node': __dirname + '/node_modules/assets/js/libs',
         }
     },
+    node: {
+        fs: 'empty',
+        uws: 'empty',
+
+    }
 });

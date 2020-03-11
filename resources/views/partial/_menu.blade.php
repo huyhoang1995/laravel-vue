@@ -55,7 +55,7 @@
                             </router-link>
 
                         </li> -->
-                        <li class=" cat-hover {{ request()->is('*/item') ? 'active active-link' : '' }}">
+                        {{--  <li class=" cat-hover {{ request()->is('*/item') ? 'active active-link' : '' }}">
                             <a>
                                 <router-link to="/item">
                                     <i class="fa fa-product-hunt" aria-hidden="true"></i>
@@ -104,7 +104,7 @@
                                     </span>
                                 </router-link>
                             </a>
-                        </li>
+                        </li>  --}}
                         <!-- User -->
 
                     </ul>
