@@ -101,50 +101,50 @@ export default {
     },
     data: function() {
         return {
-        active: false,
-        startDate: "2017-09-05",
-        endDate: "2017-09-15",
-        locale: {
-            direction: "ltr", //direction of text
-            format: "DD-MM-YYYY", //fomart of the dates displayed
-            separator: " - ", //separator between the two ranges
-            applyLabel: "Apply",
-            cancelLabel: "Cancel",
-            weekLabel: "W",
-            customRangeLabel: "Custom Range",
-            daysOfWeek: moment.weekdaysMin(), //array of days - see moment documenations for details
-            monthNames: moment.monthsShort(), //array of month names - see moment documenations for details
-            firstDay: 1 //ISO first day of week - see moment documenations for details
-        },
-        listData: [],
-        filter: {
-            // phân trang
-            pagination: {
-            total: 0,
-            per_page: 5, // required
-            current_page: 1, // required
-            last_page: 0, // required
-            from: 1,
-            to: 1
+            active: false,
+            startDate: "2017-09-05",
+            endDate: "2017-09-15",
+            locale: {
+                direction: "ltr", //direction of text
+                format: "DD-MM-YYYY", //fomart of the dates displayed
+                separator: " - ", //separator between the two ranges
+                applyLabel: "Apply",
+                cancelLabel: "Cancel",
+                weekLabel: "W",
+                customRangeLabel: "Custom Range",
+                daysOfWeek: moment.weekdaysMin(), //array of days - see moment documenations for details
+                monthNames: moment.monthsShort(), //array of month names - see moment documenations for details
+                firstDay: 1 //ISO first day of week - see moment documenations for details
             },
-            paginationOptions: {
-            offset: 4,
-            previousText: "<",
-            nextText: ">",
-            alwaysShowPrevNext: true
+            listData: [],
+            filter: {
+                // phân trang
+                pagination: {
+                total: 0,
+                per_page: 5, // required
+                current_page: 1, // required
+                last_page: 0, // required
+                from: 1,
+                to: 1
+                },
+                paginationOptions: {
+                offset: 4,
+                previousText: "<",
+                nextText: ">",
+                alwaysShowPrevNext: true
+                },
+                name: ""
             },
-            name: ""
-        },
-        singleModal: {
-            id: "singleItemModal",
-            data: {
-            id: 0,
-            name: "",
-            price: 0,
-            avatar: "",
-            title: ""
+            singleModal: {
+                id: "singleItemModal",
+                data: {
+                    id: 0,
+                    name: "",
+                    price: 0,
+                    avatar: "",
+                    title: ""
+                }
             }
-        }
         };
     },
     methods: {

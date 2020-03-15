@@ -789,3 +789,6 @@ a{
 	margin: 0 auto;
 	margin-top: 20%;
 }
+.col-xs-11.col-sm-4.alert.alert-success.animated.fadeInDown {
+    z-index: 9999999 !important;
+}

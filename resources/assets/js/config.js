@@ -14,12 +14,12 @@ config.redis = {
 config.socket = {
     login: 'login',
     disconnect: 'disconnect',
-    statusLogin: 'statusLogin',
     usersOnline: 'usersOnline',
-    callToPer: 'callToPer',
+    connecting: "_connecting",
+    connected: "_connected",
+    timeOutCalling: 'timeoutCalling',
     statusAnswer: 'statusAnswer',
     cancelCall: 'cancelCall',
-    endCall: 'endCall',
     hideModalReceiveCall: 'hideModalReceiveCall',
     outOfRoom: 'outOfRoom',
     endMyCall: 'endMyCall'

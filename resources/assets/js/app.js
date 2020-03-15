@@ -31,6 +31,7 @@ window.service = {
     exampleService: require('@libs/service/exampleService').default,
     itemService: require('@libs/service/itemService').default,
     matrixService: require('@libs/service/matrixService').default,
+    jitsiService: require('@libs/service/jitsiService').default,
 }
 
 
@@ -95,16 +96,13 @@ const router = new VueRouter({ routes })
 import { store } from "./libs/store/store";
 import LoginChatComponent from "./components/LoginChatComponent.vue";
 import VideoChatComponent from "./components/VideoChatComponent.vue";
-
 import AvatarComponent from './components/AvatarComponent.vue';
 
 
 // vue socket
-
-
 import openSocket from 'socket.io-client';
 Vue.prototype.$socket = openSocket('http://localhost:3003');
-
+Vue.prototype.$dataUserInfo = {};
 
 const app = new Vue({
     el: '#app',

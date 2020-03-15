@@ -17,33 +17,53 @@
                                 </span>
                                 <br/>
                                 <br/>
-                                <p><b>Nguyễn Huy Hoàng</b> </p>
+                                <p>
+                                    <b>{{currentUserInfo.name}}</b>
+                                </p>
                                 <p>Đang chờ người khác tham gia cuộc gọi</p>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer" style="text-align: center">
-                    <button style="font-size: 30px;" type="button" class="btn btn-danger btn-icon btn-circle fa fa-phone" data-dismiss="modal"></button>
+                    <button @click="cancelCall()" style="font-size: 30px;" type="button" class="btn btn-danger btn-icon btn-circle fa fa-phone"
+                        data-dismiss="modal"></button>
                 </div>
             </div>
         </div>
     </div>
 </template>
 <script>
+    import config from '../../config';
+
     const CallModal = {
-        props: ["id"],
+        props: ["id", "userReceiveCall", "retFunc"],
 
         created: function () {
+            var app = this;
+            this.$watch("userReceiveCall", function (newVal, oldVal) {
+                app.userReceiveCallInfo = Object.assign({}, newVal);
+                console.log(newVal);
+            });
+            app.currentUserInfo = JSON.parse(localStorage.getItem("dataUserInfo"));
 
+        },
+
+        mounted() {
+           
         },
 
         data: function () {
             return {
-
+                userReceiveCallInfo: {
+                },
+                currentUserInfo: {
+                }
             };
         },
+
         methods: {
+   
             loginJitsi: function () {
                 console.log('123123213');
                 // window.location.href= siteUrl + '/videoJitsi?nameRoom=' + this.nameRoom ;
@@ -51,6 +71,16 @@
                 // window.open(siteUrl + '/test?nameRoom=' + this.nameRoom, "myWindow", "width='100%',height='100%'");
                 var win = window.open(siteUrl + '/test?nameRoom=' + 'huyhoang', '_blank');
                 // win.focus();
+            },
+
+            cancelCall: function () {
+                // this.$socket.emit(config.socket.cancelCall, {
+                //     socketIdB: this.userReceiveCallInfo.socketId,
+                //     userNameA: this.currentUserInfo.name,
+                //     userNameB: this.userReceiveCallInfo.name,
+                //     userIdB: this.userReceiveCallInfo.id
+                // });
+                this.retFunc(true)
             },
         }
     };

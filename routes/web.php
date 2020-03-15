@@ -76,6 +76,14 @@ Route::group(['prefix' => 'rest', 'middleware' => ['web']], function () {
     Route::post('/uploadImages', 'Rest\MatrixCtrl@uploadImages');
     Route::post('/uploadFileCommon', 'Rest\MatrixCtrl@uploadFileCommon');
     Route::post('/sendMess', 'Rest\MatrixCtrl@sendMess');
+
+    //jitsi
+    Route::post('/loginJitsi', 'Rest\JitsiCtrl@login');
+    Route::get('/logout', 'Rest\JitsiCtrl@logout');
+
+    Route::get('/userInfo', 'Rest\JitsiCtrl@userInfo');
+    Route::get('/listUser', 'Rest\JitsiCtrl@listUser');
+    
 });
 Route::get('/laravel-filemanager', '\Unisharp\Laravelfilemanager\controllers\LfmController@show');
 Route::post('/laravel-filemanager/upload', '\Unisharp\Laravelfilemanager\controllers\UploadController@upload');
