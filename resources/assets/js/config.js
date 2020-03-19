@@ -12,7 +12,7 @@ config.redis = {
 }
 
 config.socket = {
-    login: 'login',
+     login: 'login',
     disconnect: 'disconnect',
     usersOnline: 'usersOnline',
     connecting: "_connecting",
@@ -22,7 +22,8 @@ config.socket = {
     cancelCall: 'cancelCall',
     hideModalReceiveCall: 'hideModalReceiveCall',
     outOfRoom: 'outOfRoom',
-    endMyCall: 'endMyCall'
+    endMyCall: 'endMyCall',
+    endCall: 'endCall'
 }
 export default config;
 

@@ -44,7 +44,12 @@
     @includeif('partial._js')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
     <script>
-        var socket = io('http://localhost:3003');
+        // var socket = io('http://localhost:3003');
+        // console.log(socket);
+        // localStorage.setItem("socket", socket);
+        // global.dataSocket = socket;
+
+
     </script>
 </body>
 

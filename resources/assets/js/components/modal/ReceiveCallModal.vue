@@ -35,7 +35,7 @@
     import config from '../../config';
 
     const ReceiveCallModal = {
-        props: ["id", "userCall"],
+        props: ["id", "userCall","retFunc"],
 
         created: function () {
             var app = this;
@@ -91,13 +91,18 @@
                     userIdA: this.userCallInfo.userIdA,
                     userIdB: currentUserInfo.id
                 });
+
+                //  khi người gọi đồng ý trả lời
                 if (status) {
                     console.log('trả lời cuộc gọi')
-                    window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(currentUserInfo.name), '_blank');
+                    console.log(this.$cmdCloseWindow)
+                    var urlData= window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(currentUserInfo.name) +'&myUserId=' + currentUserInfo.id  + '&partnerId=' +  this.userCallInfo.userIdA , '_blank');
+
+                    this.retFunc(urlData);
 
                 } else {
+                    // người gọi từ chối
                     myNotify.success("Bạn đã từ chối cuộc gọi");
-
                     console.log('thông báo thằng B từ chối')
                 }
 

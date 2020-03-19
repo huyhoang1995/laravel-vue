@@ -37,13 +37,12 @@
     import config from '../../config';
 
     const CallModal = {
-        props: ["id", "userReceiveCall", "retFunc"],
+        props: ["id", "userReceiveCall", ],
 
         created: function () {
             var app = this;
             this.$watch("userReceiveCall", function (newVal, oldVal) {
                 app.userReceiveCallInfo = Object.assign({}, newVal);
-                console.log(newVal);
             });
             app.currentUserInfo = JSON.parse(localStorage.getItem("dataUserInfo"));
 
@@ -74,13 +73,10 @@
             },
 
             cancelCall: function () {
-                // this.$socket.emit(config.socket.cancelCall, {
-                //     socketIdB: this.userReceiveCallInfo.socketId,
-                //     userNameA: this.currentUserInfo.name,
-                //     userNameB: this.userReceiveCallInfo.name,
-                //     userIdB: this.userReceiveCallInfo.id
-                // });
-                this.retFunc(true)
+                this.$socket.emit(config.socket.cancelCall, {
+                    userIdA: this.currentUserInfo.id,
+                    userIdB: this.userReceiveCallInfo.id
+                });
             },
         }
     };

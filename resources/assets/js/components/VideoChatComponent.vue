@@ -27,6 +27,7 @@
             <i @click="finishedCall()" class="btn btn-danger btn-icon btn-circle fa fa-phone" aria-hidden="true"></i>
             <i @click="handleVideo()" v-if="showHideVideo" class="btn btn-default btn-icon btn-circle fa fa-video-camera" aria-hidden="true"></i>
             <i @click="handleVideo()" v-if="!showHideVideo" class="btn btn-danger btn-icon btn-circle fa fa-video-camera" aria-hidden="true"></i>
+            
         </div>
     </div>
 </template>
@@ -34,6 +35,7 @@
 <script>
 
 // console.log(nameRoom,'room name');
+import config from '../config';
 
 
 function changeViewCurrentUser(id){
@@ -73,7 +75,10 @@ let room = null;
 
 let localTracks = [];
 const remoteTracks = {};
-let nameRoom = ""
+
+let nameRoom = "";
+let myUserId = "";
+let partnerId = "";
 
 let isVideo = true;
 
@@ -103,7 +108,7 @@ window.changeViewParticipant = function(id){
 
     // render video main
     window.renderVideoMain(dataTrack);
-
+    
 }
 
 window.renderVideoMain = function(track) {
@@ -144,8 +149,17 @@ export default {
 
     mounted() {
         nameRoom = this.getName('nameRoom');
+        myUserId =  parseInt(this.getName('myUserId'));
+        partnerId =  parseInt(this.getName('partnerId'));
+   
         this.startCall();
-        this.startInterval();
+
+        this.$socket.on(config.socket.endCall, () => {
+           console.log('data endCall');
+            room.leave();
+            connection.disconnect();
+            window.close();
+        });
 
     },
     data: function() {
@@ -162,14 +176,6 @@ export default {
     },
     methods: {
       
-        startInterval: function () {
-            setInterval(() => {
-                this.timer = this.timer + 1
-                moment(this.timer).format('mm:ss')
-
-            }, 1000);
-        },
-
         sendMessage:function(){
             room.sendTextMessage(this.message);
             this.message = "";
@@ -311,9 +317,12 @@ export default {
             this.getShowHand = !this.getShowHand;
         },
 
+
+    
+
+        
         // get event showhand 
         handleParticipantPropertyChanged:function(data, event){
-            
             if(data._properties.raisedHand == 'true') {
                 $(`.${data._id}hand`).removeClass('hide-class');
             }else{
@@ -377,6 +386,8 @@ export default {
         },
         onLocalTracks: function(tracks) {
             localTracks = tracks;
+            var numberParticipant = localTracks.getParticipantId();
+            console.log(numberParticipant, 'numberParticipant');
             for (let i = 0; i < localTracks.length; i++) {
                 localTracks[i].addEventListener(
                     JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED,
@@ -512,6 +523,12 @@ export default {
         },
 
         finishedCall: function() {
+            
+            this.$socket.emit(config.socket.endCall, {
+                myUserId: myUserId,
+                partnerId: partnerId
+            });
+            
             room.leave();
             connection.disconnect();
             window.close();

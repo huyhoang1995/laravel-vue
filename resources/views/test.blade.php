@@ -119,10 +119,10 @@
 <body >
     <div id="app">
         <div>
-         
+
             <div>
-                <video-chat-component></video-chat-component>
-                {{--  <my-login-component ></my-login-component>  --}}
+
+                 <video-chat-component></video-chat-component> 
             </div>
         </div>
         <div class="clearfix"></div>
@@ -131,6 +131,7 @@
     </div>
 
         <!-- The core Firebase JS SDK is always required and must be listed first -->
+
     <script src="/__/firebase/7.9.3/firebase-app.js"></script>
 
     <!-- TODO: Add SDKs for Firebase products that you want to use

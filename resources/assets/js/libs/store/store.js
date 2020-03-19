@@ -1,20 +1,22 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import openSocket from 'socket.io-client';
 
 Vue.use(Vuex);
 
 export const store = new Vuex.Store({
 
     state: {
-        dataLogin : {
+        dataLogin: {
             baseUrl: "",
             accessToken: "",
             userId: "",
         },
-           
-        
+        socketIo: openSocket('http://localhost:3003')
+
+
     },
-    
+
     mutations: {
         changeDataLogin: (state, payload) => {
             state.dataLogin.baseUrl = "https://" + payload.home_server;
@@ -26,6 +28,10 @@ export const store = new Vuex.Store({
             //     userId: payload.user_id,
             // }
         }
+    },
+    getters: {
+        socketIo: state => state.socketIo,
+        
     },
 
     actions: {

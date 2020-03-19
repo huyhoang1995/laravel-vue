@@ -27,11 +27,15 @@
             @includeif('partial._menu')
             <div>
                 <div class="col-md-12" id="content-container">
-                     <router-view></router-view> 
+                    <router-view></router-view> 
+                    <button id="permission-btn" onclick="main()">Ask Permission</button>
+
                 </div>
             </div>
         </div>
     </div>
+    <script src="{{ url('/js/index.js')}}"></script>
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
 
     <script src="{{ url('') }}/strophe/strophe.js"></script>
@@ -47,7 +51,8 @@
     <script src="https://unpkg.com/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-i18n/dist/vue-i18n.js"></script>
     
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js"></script>
+    
 </body>
 <script>
 </script>

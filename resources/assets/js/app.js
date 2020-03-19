@@ -100,19 +100,23 @@ import AvatarComponent from './components/AvatarComponent.vue';
 
 
 // vue socket
-import openSocket from 'socket.io-client';
-Vue.prototype.$socket = openSocket('http://localhost:3003');
-Vue.prototype.$dataUserInfo = {};
+// import openSocket from 'socket.io-client';
+// Vue.prototype.$socket = openSocket('http://localhost:3003');
+
 
 const app = new Vue({
     el: '#app',
     router,
     i18n,
     store: store,
+
     data: {
         return: {
             hello: 'hello'
         }
+    },
+    methods: {
+
     },
     components: {
         'my-login-component': LoginChatComponent,
@@ -120,6 +124,8 @@ const app = new Vue({
         'avatar-component': AvatarComponent,
     }
 });
+
+
 
 
 

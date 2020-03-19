@@ -49,12 +49,13 @@
 </template>
 
 <script>
-// import openSocket from 'socket.io-client';
-// const socket = openSocket('http://localhost:3003');
+
 
 import config from '../config';
 export default {
-
+    created() {
+    
+    },
     mounted() {
 
     },
@@ -96,33 +97,6 @@ export default {
                 }
             }).catch((err) => {
                 console.log(err);
-            })
-        },
-        _login: function() {
-
-            var that = this;
-            console.log('login');
-            this.$socket.on(config.socket.statusLogin, (data) => {
-                console.log(data);
-                // if (data.status) {
-                //     window.location.href = siteUrl + '/?#/jitsiLogin';
-                // }
-            });
-            console.log(this.idSocket)
-                this.$socket.emit(config.socket.login, { account: 'minhnq', password: '123456' }, function() {
-
-            })
-        },
-        clickButton: function() {
-            var that = this;
-
-            console.log(config)
-            // $socket is socket.io-client instance
-            this.$socket.emit('pingClient', 'PING!');
-
-            this.$socket.on('pingClient', function(data) {
-                that.idSocket = data;
-                that._login();
             })
         },
     },

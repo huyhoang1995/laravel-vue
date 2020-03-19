@@ -29,10 +29,16 @@
     </div>
 </template>
 <script>
+
+// import openSocket from 'socket.io-client';
+// const socket = openSocket('http://localhost:3003');
+
 import config from '../config';
+
 
 export default {
     created() {
+        
     },
     mounted() {
         this.getUserInfo();
