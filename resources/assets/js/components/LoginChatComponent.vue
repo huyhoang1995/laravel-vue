@@ -3,7 +3,6 @@
         <div class="cls-header cls-header-lg">
 
             <span class="brand-title" style="color: #fff; font-weight: bold; font-size:30px">Phần mềm hội nghị truyền hình </span>
-            </span>
 
         </div>
 

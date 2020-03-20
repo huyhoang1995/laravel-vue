@@ -1,5 +1,5 @@
 <?php
 
 return [
-	'jitsiServer'=> 'http://localhost:3000/api/v1',
+	'jitsiServer'=> 'http://172.16.20.180:3000/api/v1',
 ];
