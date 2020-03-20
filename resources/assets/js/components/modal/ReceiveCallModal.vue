@@ -82,7 +82,7 @@
             reactCallAnswer: function (status) {
                 var currentUserInfo = JSON.parse(localStorage.getItem("dataUserInfo"));
 
-                this.$socket.emit(config.socket.statusAnswer, {
+                 this.$socketServer.socket.emit(config.socket.statusAnswer, {
                     statusAnswer: status,
                     socketIdA: this.userCallInfo.socketIdA,
                     userNameA: this.userCallInfo.userNameA,
@@ -94,8 +94,9 @@
 
                 //  khi người gọi đồng ý trả lời
                 if (status) {
+                    console.log(this.$testData.color, 'color oringinal');
+                    this.$testData.color = 'green 123';
                     console.log('trả lời cuộc gọi')
-                    console.log(this.$cmdCloseWindow)
                     var urlData= window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(currentUserInfo.name) +'&myUserId=' + currentUserInfo.id  + '&partnerId=' +  this.userCallInfo.userIdA , '_blank');
 
                     this.retFunc(urlData);

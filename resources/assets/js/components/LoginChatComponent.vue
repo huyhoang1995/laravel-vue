@@ -50,7 +50,6 @@
 
 <script>
 
-
 import config from '../config';
 export default {
     created() {

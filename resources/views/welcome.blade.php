@@ -15,7 +15,23 @@
     @includeif('partial._default_css')
     @includeif('partial._css')
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <style>
+        .online{
+            background:green;
+        }
+        
+        .busy{
+            background:red;
+        }
 
+        .incall{
+            background:blue;
+        }
+
+        .offline{
+            background:grey;
+        }
+    </style>
 
 
 </head>
@@ -55,5 +71,6 @@
     
 </body>
 <script>
+
 </script>
 </html>

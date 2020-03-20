@@ -12,7 +12,7 @@ export const store = new Vuex.Store({
             accessToken: "",
             userId: "",
         },
-        socketIo: openSocket('http://localhost:3003')
+        // socketIo: openSocket('http://localhost:3003')
 
 
     },

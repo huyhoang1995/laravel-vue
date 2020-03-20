@@ -32,7 +32,7 @@
                 </div>
 
                 <div class="panel-body">
-
+                    {{listUserData}}
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -42,13 +42,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="(item, index) in listUserData">
-                                <td><img class="img-circle" style="width:30px;height:30px" v-bind:src="'./images/avt.png'" alt="">                                    {{item.name}}</td>
-                                <td v-if="item.status">
-                                    <button class="btn btn-info">{{item.status}}</button>
-                                </td>
-                                <td v-if="!item.status">
-                                    <button class="btn btn-primary" disabled="disabled">offline</button>
+                            <tr v-for="(item, index) in listUserData" :key="index">
+                                <td><img class="img-circle" style="width:30px;height:30px" v-bind:src="'./images/avt.png'" alt="">{{item.name}}</td>
+                                <td>
+                                    <button class="btn online" style="color: #fff" v-if="checkStatus(item.status, item.socketId) == 'online' ">{{checkStatus(item.status, item.socketId)}}</button>
+                                    <button class="btn busy" style="color: #fff" v-if="checkStatus(item.status, item.socketId) == 'busy' ">{{checkStatus(item.status, item.socketId)}}</button>
+                                    <button class="btn incall" style="color: #fff" v-if="checkStatus(item.status, item.socketId) == 'incall' ">{{checkStatus(item.status, item.socketId)}}</button>
+                                    <button class="btn offline" style="color: #fff" v-if="checkStatus(item.status, item.socketId) == 'offline' ">{{checkStatus(item.status, item.socketId)}}</button>
                                 </td>
                                 <td>
                                     <i class="btn btn-info btn-icon btn-circle fa fa-phone" title="Modal gọi đi" aria-hidden="true" @click="openCallModal(item)"></i>
@@ -63,6 +63,8 @@
                     </table>
                 </div>
             </div>
+            <i class="btn btn-info btn-icon btn-circle fa fa-phone" title="Modal gọi đi" aria-hidden="true" @click="reloadDataRenderList()"></i>
+
             <audio id="audioTune" controls style="display: none" muted="muted">
                 <source v-bind:src="'./sound/ring.mp3'" type="audio/ogg">
                 <source v-bind:src="'./sound/ring.mp3'" type="audio/mpeg">
@@ -75,6 +77,8 @@
     </div>
 </template>
 <script>
+    var arr1 = [];
+    var arr2 = [];
 
 
 
@@ -92,58 +96,61 @@
 
 
     import config from '../config';
-    import { mapGetters } from 'vuex'
-
+    import openSocket from 'socket.io-client';
     export default {
-         computed: {
-            ...mapGetters([
-            'socketIo'
-            ])
+        created() {
+            this.$socketServer.socket = openSocket('http://localhost:3003');
         },
         mounted() {
-            console.log(socketIo,'ssocket values');
             // this.getUserOnline();
-
-            // this.listUser();
             // danh sách người online
-            this.$socket.emit(config.socket.usersOnline);
-            
+
             var that = this;
 
-            service.jitsiService.action.listUser().then(resp => {
-                var arr1 = [];
-                var arr2 = [];
-                arr1 = resp.data;
-                console.log(arr1);
-                this.$socket.on(config.socket.usersOnline, (listUserOnline) => {
-                
-                // danh sách người dùng database
-            
-                let arrUserOnline = [];
-                console.log(listUserOnline, 'listUseronline');
-                for (const key in listUserOnline) {
-                    if (listUserOnline.hasOwnProperty(key)) {
-                        listUserOnline[key]['id'] = parseInt(key);
-                        arrUserOnline.push(listUserOnline[key]);
-                    }
-                }
 
-                arr2 = Object.values(arrUserOnline);
-                that.listUserData = this.mergeArrayObject(arr1, arr2);
-                });
+            // list userDatabase
+            service.jitsiService.action.listUser().then(resp => {
+                arr1 = resp.data;
+                this.$socketServer.socket.emit(config.socket.usersOnline);
             }).catch(err => {
                 console.log(err)
             })
-           
+
+            this.$socketServer.socket.on(config.socket.usersOnline, (listUserOnline) => {
+
+                console.log(listUserOnline, 'listUserSocket')
+
+                let arrUserOnline = [];
+                for (const key in listUserOnline) {
+                    // set info currentUser
+                    if (this.dataUserInfo.id == key) {
+                        this.dataUserInfo.socketId = listUserOnline[key]['socketId'];
+                        this.dataUserInfo.status = listUserOnline[key]['status'];
+                    } else {
+                        for (const index in arr1) {
+                            if (arr1[index].id == key) {
+                                arr1[index].status = listUserOnline[key]['status']
+                                arr1[index].socketId = listUserOnline[key]['socketId']
+                            }
+                        }
+                    }
+                }
+                this.preSync = arr1;
+
+                this.reloadDataRenderList();
+
+            });
+
+
+
 
             // khi người dùng nhận được cuộc gọi
-            this.$socket.on(config.socket.connecting, (data) => {
-                console.log(data, 'data on connecting')
+            this.$socketServer.socket.on(config.socket.connecting, (data) => {
 
 
                 // console.log(data, 'data on socketCall')
                 this.openReceiveCallModal(data)
-                this.$socket.emit(config.socket.connected, {
+                this.$socketServer.socket.emit(config.socket.connected, {
                     userIdA: data.userIdA,
                     socketIdA: data.socketIdA,
                     userIdB: data.userIdB,
@@ -153,19 +160,16 @@
                 // this.notifyMe();
             });
 
-            this.$socket.on(config.socket.connected, (data) => {
+            this.$socketServer.socket.on(config.socket.connected, (data) => {
                 console.log(data, 'data on connected')
                 if (data) {
                     this.playAudioTune()
                 } else {
 
                 }
-                // this.openReceiveCallModal(data)
-                // this.playAudioTune();
-                // this.notifyMe();
             });
 
-            this.$socket.on(config.socket.timeOutCalling, () => {
+            this.$socketServer.socket.on(config.socket.timeOutCalling, () => {
                 $("#" + this.idCallModal).modal("hide");
                 $("#" + this.idModal).modal("hide");
                 this.stopAudioTune();
@@ -173,13 +177,13 @@
             })
 
             // khi người gọi hủy cuộc gọi
-            this.$socket.on(config.socket.cancelCall, () => {
+            this.$socketServer.socket.on(config.socket.cancelCall, () => {
                 this.closeReceiveCallModal();
                 myNotify.success("Bạn đã bỏ lỡ cuộc gọi");
             });
 
             // khi người dùng xử lý cuộc gọi
-            this.$socket.on(config.socket.statusAnswer, (data) => {
+            this.$socketServer.socket.on(config.socket.statusAnswer, (data) => {
                 console.log(data, 'check status answer')
 
                 if (data.status) {
@@ -197,7 +201,7 @@
             });
 
             // đóng modal khi thằng B trả lời
-            this.$socket.on(config.socket.hideModalReceiveCall, () => {
+            this.$socketServer.socket.on(config.socket.hideModalReceiveCall, () => {
                 this.stopAudioTune();
                 this.closeReceiveCallModal()
                 console.log('đóng modal khi b làm gì đấy');
@@ -205,12 +209,13 @@
 
             var that = this;
 
-            this.$socket.on(config.socket.endCall, () => {
+            this.$socketServer.socket.on(config.socket.endCall, () => {
                 console.log('data endCall');
                 that.finishedCallUrl.close();
             });
 
         },
+
         data: function () {
             return {
                 dataUserInfo: {},
@@ -222,11 +227,54 @@
                 userReceiveCall: {},
                 userCall: {},
                 finishedCallUrl: "",
+                preSync: [],
+                statusClassCheck: {
+                    online: false,
+                    busy: false,
+                    incall: false,
+                    offline: false,
+                }
             }
 
         },
+
         methods: {
-         
+            checkStatus: function (status, socketId) {
+
+
+
+                if (!status || !socketId) {
+
+                    return 'offline'
+
+                }
+
+                if (socketId && socketId.length > 0 && status == 'online') {
+                    this.statusClassCheck.online = true;
+                    return 'online'
+
+                }
+
+                if (status == 'busy') {
+                    this.statusClassCheck.busy = true;
+                    return 'busy'
+
+                }
+
+                if (status == 'incall') {
+                    this.statusClassCheck.incall = true;
+                    return 'incall'
+                }
+
+            },
+
+            reloadDataRenderList: function () {
+                // this.listUserData = this.preSync;
+                this.listUserData = [];
+                this.listUserData = this.preSync;
+                console.log(this.preSync);
+            },
+
             playAudioTune: function () {
                 $(document).ready(function () {
 
@@ -259,56 +307,38 @@
             // nguời gọi hủy 
 
             // danh sách người dùng
-            listUser: function () {
-                var arr1 = [];
-                var arr2 = [];
-
-                // danh sách người dùng database
-                service.jitsiService.action.listUser().then(resp => {
-                    arr1 = resp.data;
-                }).then(() => {
-                    this.$socket.emit(config.socket.usersOnline);
-                }).catch(err => {
-                    console.log(err)
-                })
-                // danh sách người dùng online(socket)
-                this.$socket.on(config.socket.usersOnline, (listUserOnline) => {
-                    let arrUserOnline = [];
-
-                    for (const key in listUserOnline) {
-                        if (listUserOnline.hasOwnProperty(key)) {
-                            listUserOnline[key]['id'] = parseInt(key);
-                            arrUserOnline.push(listUserOnline[key]);
-                        }
-                    }
-
-                    arr2 = Object.values(arrUserOnline);
-                    this.listUserData = this.mergeArrayObject(arr1, arr2);
-                });
-            },
 
             // check userOnline
             mergeArrayObject: function (arr1, arr2) {
-
-                console.log(arr1)
-                console.log(arr2)
+                console.log(arr1, 'listUserDatabase')
+                console.log(arr2, 'listUserOnline')
                 this.dataUserInfo = JSON.parse(localStorage.getItem("dataUserInfo"));
-                
-                _.map(arr1, item1 => {
-                    _.map(arr2, item2 => {
-                        if (item1.name == item2.name) {
-                            item1.socketId = item2.socketId;
-                            item1.status = item2.status
-                        }
-                        if (this.dataUserInfo.name == item2.name) {
-                            this.dataUserInfo.socketId = item2.socketId;
-                        }
-                    })
+
+                return _.map(arr1, function (obj) {
+                    return _.assign(obj, _.find(arr2, {
+                        id: obj.id
+                    }));
                 })
+                // _.map(arr1, item1 => {
+                //     _.map(arr2, item2 => {
+                //         if (item1.name == item2.name) {
+                //             item1.socketId = item2.socketId;
+                //             item1.status = item2.status
+                //         }else{
+                //             item1.status = ""
+
+                //         }
+
+                //         if (this.dataUserInfo.name == item2.name) {
+                //             this.dataUserInfo.socketId = item2.socketId;
+                //         }
+                //     })
+                // })
 
                 localStorage.setItem("dataUserInfo", JSON.stringify(this.dataUserInfo));
-
-                return arr1;
+                this.preSync = arr1;
+                console.log(arr1, 'data mutation')
+                this.reloadDataRenderList();
             },
 
             loginJitsi: function () {
@@ -332,30 +362,12 @@
                 this.userReceiveCall = dataUser;
                 $("#" + this.idCallModal).modal("show");
 
-                this.$socket.emit(config.socket.connecting, {
+                this.$socketServer.socket.emit(config.socket.connecting, {
                     userNameA: this.dataUserInfo.name,
                     userIdA: this.dataUserInfo.id,
                     userNameB: dataUser.name,
                     userIdB: dataUser.id
                 });
-
-                // setTimeout(() => {
-                //     if (this.checkStatusCallCancel) {
-
-                //     } else {
-                //         this.$socket.emit(config.socket.cancelCall, {
-                //             socketIdB: dataUser.socketId,
-                //             userNameA: this.dataUserInfo.name,
-                //             userNameB: dataUser.name,
-                //             userIdB: dataUser.id
-                //         });
-                //         $("#" + this.idCallModal).modal("hide");
-
-                //         console.log('đóng modal sau 10s')
-                //     }
-
-                // }, 10000);
-
             },
 
             notification: function () {
@@ -397,9 +409,9 @@
                 console.log('return data', data)
                 this.finishedCallUrl = data;
             },
-            
+
             finishedCall: function () {
-                this.$socket.emit(config.socket.endCall, {
+                this.$socketServer.socket.emit(config.socket.endCall, {
                     myUserId: this.dataUserInfo.id,
                     partnerId: this.userReceiveCall.id
                 });
@@ -410,6 +422,7 @@
             receiveCallModal: require("@component/modal/ReceiveCallModal.vue"),
             callModal: require("@component/modal/CallModal.vue")
         }
+
     };
 
 </script>

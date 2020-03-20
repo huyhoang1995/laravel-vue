@@ -27,5 +27,5 @@ const main = async () => {
     const swRegistration = await registerServiceWorker()
     const permission = await requestNotificationPermission()
 }
-
 main();
+

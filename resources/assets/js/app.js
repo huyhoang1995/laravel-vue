@@ -97,7 +97,8 @@ import { store } from "./libs/store/store";
 import LoginChatComponent from "./components/LoginChatComponent.vue";
 import VideoChatComponent from "./components/VideoChatComponent.vue";
 import AvatarComponent from './components/AvatarComponent.vue';
-
+Vue.prototype.$socketServer = {socket :''};
+Vue.prototype.$testData = {color :'red'};
 
 // vue socket
 // import openSocket from 'socket.io-client';

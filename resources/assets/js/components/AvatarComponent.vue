@@ -29,65 +29,71 @@
     </div>
 </template>
 <script>
+    // import openSocket from 'socket.io-client';
+    // const socket = openSocket('http://localhost:3003');
 
-// import openSocket from 'socket.io-client';
-// const socket = openSocket('http://localhost:3003');
-
-import config from '../config';
+    import config from '../config';
 
 
-export default {
-    created() {
-        
-    },
-    mounted() {
-        this.getUserInfo();
-    },
-    data: function() {
-        return {
-            dataInfo: {}
-        };
-    },
-    methods: {
-        getUserInfo: function() {
-            service.jitsiService.action.userInfo().then(resp => {
-                // console.log(resp.data);
-                this.dataInfo = resp.data;
+    export default {
+        created() {
 
-                // userInfo to storage
-                localStorage.setItem("dataUserInfo", JSON.stringify(resp.data));
-
-                this.$socket.emit(config.socket.login, { id: resp.data.id, name: resp.data.name }, function() {
-                    // console.log('data call back');
-                })
-            }).catch(err => {
-                console.log(err)
-            })
         },
+        mounted() {
+            this.getUserInfo();
+        },
+        data: function () {
+            return {
+                dataInfo: {}
+            };
+        },
+        methods: {
+            getUserInfo: function () {
+                service.jitsiService.action.userInfo().then(resp => {
+                    // console.log(resp.data);
+                    this.dataInfo = resp.data;
 
-        logout: function() {
-            service.jitsiService.action.logout().then(resp => {
-                console.log(resp);
-                window.location.href = siteUrl + "/login";
-            }).catch(err => {
-                console.log(err)
-            })
+                    // userInfo to storage
+                    localStorage.setItem("dataUserInfo", JSON.stringify(resp.data));
+
+
+                }).then(() => {
+                    this.$socketServer.socket.emit(config.socket.login, { id: this.dataInfo.id, name: this.dataInfo.name }, this.callBackUserOnline());
+                }).catch(err => {
+                    console.log(err)
+                })
+            },
+
+            callBackUserOnline: function () {
+                this.$socketServer.socket.emit(config.socket.usersOnline);
+
+            },
+
+            logout: function () {
+                service.jitsiService.action.logout().then(resp => {
+                    this.$socketServer.socket.disconnect();
+
+                    console.log(resp);
+                    window.location.href = siteUrl + "/login";
+                }).catch(err => {
+                    console.log(err)
+                })
+            }
+
+            // logout: function () {
+            //     service.matrixService.action
+            //         .logoutMatrix()
+            //         .then(result => {
+            //             console.log(result);
+            //             var url = siteUrl + "/login";
+            //             window.location.href = url;
+            //         })
+            //         .catch(err => {
+            //             console.log(err);
+            //         });
+            //     localStorage.removeItem("dataLogin");
+            // }
         }
-
-        // logout: function () {
-        //     service.matrixService.action
-        //         .logoutMatrix()
-        //         .then(result => {
-        //             console.log(result);
-        //             var url = siteUrl + "/login";
-        //             window.location.href = url;
-        //         })
-        //         .catch(err => {
-        //             console.log(err);
-        //         });
-        //     localStorage.removeItem("dataLogin");
-        // }
-    }
-};
+    };
 
 </script>

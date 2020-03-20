@@ -26,6 +26,7 @@
                     </form>
                 </div>
                 <div class="modal-footer" style="text-align: center">
+                    <button @click="testMethod()">Test</button>
                     <button @click="cancelCall()" style="font-size: 30px;" type="button" class="btn btn-danger btn-icon btn-circle fa fa-phone"
                         data-dismiss="modal"></button>
                 </div>
@@ -62,18 +63,12 @@
         },
 
         methods: {
-   
-            loginJitsi: function () {
-                console.log('123123213');
-                // window.location.href= siteUrl + '/videoJitsi?nameRoom=' + this.nameRoom ;
-                // window.open(siteUrl + '/videoJitsi?nameRoom=' + this.nameRoom);
-                // window.open(siteUrl + '/test?nameRoom=' + this.nameRoom, "myWindow", "width='100%',height='100%'");
-                var win = window.open(siteUrl + '/test?nameRoom=' + 'huyhoang', '_blank');
-                // win.focus();
+            testMethod:function(){
+                console.log(this.$dataTest.value);
             },
 
             cancelCall: function () {
-                this.$socket.emit(config.socket.cancelCall, {
+                 this.$socketServer.socket.emit(config.socket.cancelCall, {
                     userIdA: this.currentUserInfo.id,
                     userIdB: this.userReceiveCallInfo.id
                 });

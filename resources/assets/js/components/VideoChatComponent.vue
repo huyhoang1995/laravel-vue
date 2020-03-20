@@ -1,22 +1,5 @@
 <template>
     <div>
-        <!-- <div class="chat-box"> -->
-            <!-- <div class="chatlist" style="overflow-y: scroll; padding: 20px">
-                 <div v-for="conversation in  listConversation">
-                    <p>{{conversation}}</p>
-                </div>
-            </div> -->
-           
-            <!-- <div class="clearfix"></div>
-            <div style="padding: 20px;">
-                 <form v-enter="sendMessage"> 
-                    <input style="color:#000" type="text" placeholder="nhập tin nhắn" v-model="message"/>
-                    <button @click="sendMessage()" class="btn btn-success">Send</button>
-                 </form> 
-         
-            </div> -->
-        <!-- </div> -->
-                    
         <div class="center-video">
 
         </div>
@@ -27,7 +10,6 @@
             <i @click="finishedCall()" class="btn btn-danger btn-icon btn-circle fa fa-phone" aria-hidden="true"></i>
             <i @click="handleVideo()" v-if="showHideVideo" class="btn btn-default btn-icon btn-circle fa fa-video-camera" aria-hidden="true"></i>
             <i @click="handleVideo()" v-if="!showHideVideo" class="btn btn-danger btn-icon btn-circle fa fa-video-camera" aria-hidden="true"></i>
-            
         </div>
     </div>
 </template>
@@ -144,17 +126,20 @@ window.changeViewCurrentUser = function () {
     $('.video-call-small').children().children().removeClass('overlay-background');
 
 }
+    import openSocket from 'socket.io-client';
 
 export default {
-
+    created() {
+        this.$socketServer.socket = openSocket('http://localhost:3003');
+    },
     mounted() {
         nameRoom = this.getName('nameRoom');
         myUserId =  parseInt(this.getName('myUserId'));
         partnerId =  parseInt(this.getName('partnerId'));
    
         this.startCall();
-
-        this.$socket.on(config.socket.endCall, () => {
+        
+        this.$socketServer.socket.on(config.socket.endCall, () => {
            console.log('data endCall');
             room.leave();
             connection.disconnect();
@@ -385,9 +370,7 @@ export default {
             connection.disconnect();
         },
         onLocalTracks: function(tracks) {
-            localTracks = tracks;
-            var numberParticipant = localTracks.getParticipantId();
-            console.log(numberParticipant, 'numberParticipant');
+            localTracks = tracks ;  
             for (let i = 0; i < localTracks.length; i++) {
                 localTracks[i].addEventListener(
                     JitsiMeetJS.events.track.TRACK_AUDIO_LEVEL_CHANGED,
@@ -523,8 +506,8 @@ export default {
         },
 
         finishedCall: function() {
-            
-            this.$socket.emit(config.socket.endCall, {
+            console.log(this.$testData.color, 'color mutation')
+            this.$socketServer.socket.emit(config.socket.endCall, {
                 myUserId: myUserId,
                 partnerId: partnerId
             });
