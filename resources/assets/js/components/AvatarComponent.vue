@@ -65,7 +65,7 @@
             },
 
             callBackUserOnline: function () {
-                this.$socketServer.socket.emit(config.socket.usersOnline);
+                // this.$socketServer.socket.emit(config.socket.usersOnline);
 
             },
 

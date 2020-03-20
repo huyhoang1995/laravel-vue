@@ -44,7 +44,7 @@
             <div>
                 <div class="col-md-12" id="content-container">
                     <router-view></router-view> 
-                    <button id="permission-btn" onclick="main()">Ask Permission</button>
+                    <!-- <button id="permission-btn" onclick="main()">Ask Permission</button> -->
 
                 </div>
             </div>

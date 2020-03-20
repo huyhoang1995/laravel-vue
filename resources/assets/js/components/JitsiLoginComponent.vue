@@ -1,29 +1,5 @@
 <template>
     <div class="row col-sm-12">
-        <!-- <div class="welcome col-sm-9">
-                        <div class="box-enter">
-                            <div class="panel panel-default">
-                                <div class="panel-body">
-                                    <form v-enter="loginJitsi">
-                                        <legend class="col-md-12">Start a new meeting</legend>
-                                        <span class="col-md-10">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" id="" placeholder="Nhập tên" v-model="nameRoom">
-                                            </div>
-                                        </span>
-                                        <span class="col-md-2">
-                                            <a href="javascript:void(0)" class="btn btn-primary" @click="loginJitsi()">JOIN ROOM</a>
-                                            <br/>
-                                             <a href="javascript:void(0)" class="btn btn-primary" @click="openModal()">Show modal</a>
-                                            <br/>
-                                            <a href="javascript:void(0)" class="btn btn-primary" @click="notifyMe()">Notify</a> 
-                                            <button @click="getUserOnline()">test</button>
-                                        </span>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div> -->
         <div class="col-sm-12">
             <div class="panel panel-default" style="height:100vh">
                 <div class="panel-heading">
@@ -32,7 +8,6 @@
                 </div>
 
                 <div class="panel-body">
-                    {{listUserData}}
                     <table class="table table-striped table-hover">
                         <thead>
                             <tr>
@@ -45,26 +20,20 @@
                             <tr v-for="(item, index) in listUserData" :key="index">
                                 <td><img class="img-circle" style="width:30px;height:30px" v-bind:src="'./images/avt.png'" alt="">{{item.name}}</td>
                                 <td>
-                                    <button class="btn online" style="color: #fff" v-if="checkStatus(item.status, item.socketId) == 'online' ">{{checkStatus(item.status, item.socketId)}}</button>
-                                    <button class="btn busy" style="color: #fff" v-if="checkStatus(item.status, item.socketId) == 'busy' ">{{checkStatus(item.status, item.socketId)}}</button>
-                                    <button class="btn incall" style="color: #fff" v-if="checkStatus(item.status, item.socketId) == 'incall' ">{{checkStatus(item.status, item.socketId)}}</button>
-                                    <button class="btn offline" style="color: #fff" v-if="checkStatus(item.status, item.socketId) == 'offline' ">{{checkStatus(item.status, item.socketId)}}</button>
+
+                                    <button v-if="item.status" class="btn" style="color: #fff" :class="item.status">{{item.status }}</button>
+                                    <button v-if="!item.status" class="btn offline" style="color: #fff">offline</button>
                                 </td>
                                 <td>
                                     <i class="btn btn-info btn-icon btn-circle fa fa-phone" title="Modal gọi đi" aria-hidden="true" @click="openCallModal(item)"></i>
-                                    <i class="btn btn-success btn-icon btn-circle fa fa-volume-control-phone" title="Modal gọi đến" aria-hidden="true" @click="openReceiveCallModal()"></i>
                                     <button @click="playAudioTune()" style="display:none"> bật nhạc</button>
                                     <button @click="stopAudioTune()" style="display:none"> tắt nhạc</button>
-
-                                    <button @click="finishedCall()">finishedCall</button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <i class="btn btn-info btn-icon btn-circle fa fa-phone" title="Modal gọi đi" aria-hidden="true" @click="reloadDataRenderList()"></i>
-
             <audio id="audioTune" controls style="display: none" muted="muted">
                 <source v-bind:src="'./sound/ring.mp3'" type="audio/ogg">
                 <source v-bind:src="'./sound/ring.mp3'" type="audio/mpeg">
@@ -108,17 +77,11 @@
             var that = this;
 
 
-            // list userDatabase
-            service.jitsiService.action.listUser().then(resp => {
-                arr1 = resp.data;
-                this.$socketServer.socket.emit(config.socket.usersOnline);
-            }).catch(err => {
-                console.log(err)
-            })
 
             this.$socketServer.socket.on(config.socket.usersOnline, (listUserOnline) => {
 
                 console.log(listUserOnline, 'listUserSocket')
+                this.dataUserInfo = JSON.parse(localStorage.getItem("dataUserInfo"));
 
                 let arrUserOnline = [];
                 for (const key in listUserOnline) {
@@ -135,11 +98,25 @@
                         }
                     }
                 }
-                this.preSync = arr1;
 
+                localStorage.setItem("dataUserInfo", JSON.stringify(this.dataUserInfo));
+
+                this.preSync = arr1;
+                console.log(arr1);
                 this.reloadDataRenderList();
 
             });
+
+            // list userDatabase
+            service.jitsiService.action.listUser().then(resp => {
+                arr1 = resp.data;
+            }).then(() => {
+                this.$socketServer.socket.emit(config.socket.usersOnline);
+            })
+                .catch(err => {
+                    console.log(err)
+                })
+
 
 
 
@@ -188,7 +165,8 @@
 
                 if (data.status) {
                     console.log('thằng B trả lời')
-                    window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(this.userReceiveCall.name) + '&myUserId=' + this.dataUserInfo.id + '&partnerId=' + this.userReceiveCall.id, '_blank');
+
+                    this.finishedCallUrlCall = window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(this.userReceiveCall.name) + '&myUserId=' + this.dataUserInfo.id + '&partnerId=' + this.userReceiveCall.id, '_blank');
                     // this.$windowChatCall = window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(this.userReceiveCall.name)  +'&myUserId=' + this.dataUserInfo.id+ '&partnerId=' + this.userReceiveCall.id, "myWindow", "width='100%',height='100%'");
                 } else {
                     myNotify.success("Người dùng bận");
@@ -211,7 +189,21 @@
 
             this.$socketServer.socket.on(config.socket.endCall, () => {
                 console.log('data endCall');
-                that.finishedCallUrl.close();
+                console.log(that.finishedCallUrlCall)
+                console.log(that.finishedCallUrl)
+
+                try {
+                    that.finishedCallUrl.close();
+                } catch (err) {
+
+                }
+
+                try {
+                    that.finishedCallUrlCall.close();
+                } catch (err) {
+
+                }
+
             });
 
         },
@@ -227,47 +219,14 @@
                 userReceiveCall: {},
                 userCall: {},
                 finishedCallUrl: "",
+                finishedCallUrlCall: "",
                 preSync: [],
-                statusClassCheck: {
-                    online: false,
-                    busy: false,
-                    incall: false,
-                    offline: false,
-                }
+
             }
 
         },
 
         methods: {
-            checkStatus: function (status, socketId) {
-
-
-
-                if (!status || !socketId) {
-
-                    return 'offline'
-
-                }
-
-                if (socketId && socketId.length > 0 && status == 'online') {
-                    this.statusClassCheck.online = true;
-                    return 'online'
-
-                }
-
-                if (status == 'busy') {
-                    this.statusClassCheck.busy = true;
-                    return 'busy'
-
-                }
-
-                if (status == 'incall') {
-                    this.statusClassCheck.incall = true;
-                    return 'incall'
-                }
-
-            },
-
             reloadDataRenderList: function () {
                 // this.listUserData = this.preSync;
                 this.listUserData = [];

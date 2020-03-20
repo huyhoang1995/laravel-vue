@@ -506,7 +506,6 @@ export default {
         },
 
         finishedCall: function() {
-            console.log(this.$testData.color, 'color mutation')
             this.$socketServer.socket.emit(config.socket.endCall, {
                 myUserId: myUserId,
                 partnerId: partnerId
