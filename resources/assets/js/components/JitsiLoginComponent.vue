@@ -26,23 +26,42 @@
                                 </td>
                                 <td>
                                     <i class="btn btn-info btn-icon btn-circle fa fa-phone" title="Modal gọi đi" aria-hidden="true" @click="openCallModal(item)"></i>
-                                    <button @click="playAudioTune()" style="display:none"> bật nhạc</button>
-                                    <button @click="stopAudioTune()" style="display:none"> tắt nhạc</button>
+                                    <button @click="playAudioConnecting()"> bật nhạc</button>
+                                    <button @click="playAudioWaitingCall()"> bật nhạc</button>
+                                    <button @click="playAudioBusy()"> bật nhạc</button>
+                                    <button @click="playAudioNoanswer()"> bật nhạc</button>
+
+                                    <button @click="stopAudioTune()"> tắt nhạc</button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <audio id="audioTune" controls style="display: none" muted="muted">
-                <source v-bind:src="'./sound/ring.mp3'" type="audio/ogg">
-                <source v-bind:src="'./sound/ring.mp3'" type="audio/mpeg">
+            <audio id="connecting" controls style="display: none" muted="muted" loop>
+                <source v-bind:src="'./sound/connecting.mp3'" type="audio/ogg">
+                <source v-bind:src="'./sound/connecting.mp3'" type="audio/mpeg">
+            </audio>
+
+            <audio id="watingcall" controls style="display: none" muted="muted" loop>
+                <source v-bind:src="'./sound/watingcall.mp3'" type="audio/ogg">
+                <source v-bind:src="'./sound/watingcall.mp3'" type="audio/mpeg">
+            </audio>
+
+            <audio id="busy_signal" controls style="display: none" muted="muted" loop>
+                <source v-bind:src="'./sound/busy_signal.mp3'" type="audio/ogg">
+                <source v-bind:src="'./sound/busy_signal.mp3'" type="audio/mpeg">
+            </audio>
+
+            <audio id="noanswer" controls style="display: none" muted="muted" loop>
+                <source v-bind:src="'./sound/noanswer.mp3'" type="audio/ogg">
+                <source v-bind:src="'./sound/noanswer.mp3'" type="audio/mpeg">
             </audio>
         </div>
 
         <!--modal  -->
         <receive-call-modal :id="idModal" :user-call="userCall" :ret-func="checkFinishedCall"></receive-call-modal>
-        <call-modal :id="idCallModal" :user-receive-call="userReceiveCall"></call-modal>
+        <call-modal :id="idCallModal" :user-receive-call="userReceiveCall" :status-call-modal="statusCallModal" :ret-func="cancelCall"></call-modal>
     </div>
 </template>
 <script>
@@ -53,13 +72,41 @@
 
     $(document).ready(function () {
 
-        var audioTag = document.getElementById("audioTune");
-        window.playAudio = function () {
-            audioTag.play();
+        // nhạc chờ
+        var audioConnecting = document.getElementById("connecting");
+
+        window.playAudioConnecting = function () {
+            audioConnecting.play();
         }
 
-        window.pauseAudio = function () {
-            audioTag.pause();
+        // nhạc khi đã kết nối và đợi người nhận trả lời
+        var audioWaitingCall = document.getElementById("watingcall");
+        window.playAudioWaitingCall = function () {
+            audioWaitingCall.play();
+        }
+
+
+
+        //nhạc khi người nhận bận 
+        var audioBusy = document.getElementById("busy_signal");
+        window.playAudioBusy = function () {
+            audioBusy.play();
+        }
+
+
+        //nhạc ko ai trả lời 
+        var audioNoanswer = document.getElementById("noanswer");
+        window.playAudioNoanswer = function () {
+            audioNoanswer.play();
+        }
+
+        // tắt hết nhạc
+
+        window.turnOffAllMusic = function () {
+            audioConnecting.pause();
+            audioWaitingCall.pause();
+            audioBusy.pause();
+            audioNoanswer.pause();
         }
     });
 
@@ -137,19 +184,29 @@
                 // this.notifyMe();
             });
 
+            // người gọi kết nối thành công
             this.$socketServer.socket.on(config.socket.connected, (data) => {
-                console.log(data, 'data on connected')
                 if (data) {
-                    this.playAudioTune()
+
+                    this.stopAudioTune();
+                    this.playAudioWaitingCall();
+
+                    this.statusCallModal = "Đã kết nối thành công";
                 } else {
 
                 }
             });
-
+            var that = this;
             this.$socketServer.socket.on(config.socket.timeOutCalling, () => {
-                $("#" + this.idCallModal).modal("hide");
-                $("#" + this.idModal).modal("hide");
-                this.stopAudioTune();
+
+                that.stopAudioTune();
+                that.playAudioNoanswer();
+                setTimeout(function () {
+                    that.stopAudioTune();
+                    $("#" + that.idCallModal).modal("hide");
+                    $("#" + that.idModal).modal("hide");
+                }, 2000);
+
 
             })
 
@@ -161,6 +218,8 @@
 
             // khi người dùng xử lý cuộc gọi
             this.$socketServer.socket.on(config.socket.statusAnswer, (data) => {
+                this.stopAudioTune();
+
                 console.log(data, 'check status answer')
 
                 if (data.status) {
@@ -168,13 +227,20 @@
 
                     this.finishedCallUrlCall = window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(this.userReceiveCall.name) + '&myUserId=' + this.dataUserInfo.id + '&partnerId=' + this.userReceiveCall.id, '_blank');
                     // this.$windowChatCall = window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(this.userReceiveCall.name)  +'&myUserId=' + this.dataUserInfo.id+ '&partnerId=' + this.userReceiveCall.id, "myWindow", "width='100%',height='100%'");
-                } else {
-                    myNotify.success("Người dùng bận");
+                    $("#" + this.idCallModal).modal("hide");
 
+                } else {
+                    that.playAudioBusy()
+
+                    setTimeout(function () {
+                        $("#" + that.idCallModal).modal("hide");
+                        that.stopAudioTune();
+
+                    }, 2000);
+
+                    myNotify.success("Người dùng bận");
                     console.log('thằng B bận')
                 }
-                $("#" + this.idCallModal).modal("hide");
-                this.stopAudioTune();
 
             });
 
@@ -221,12 +287,47 @@
                 finishedCallUrl: "",
                 finishedCallUrlCall: "",
                 preSync: [],
+                statusCallModal: ""
 
             }
 
         },
 
         methods: {
+            // nhạc khi bắt đầu kết nối
+            playAudioConnecting: function () {
+                $(document).ready(function () {
+                    window.playAudioConnecting();
+                });
+            },
+
+            // nhạc khi kết nối thành công;
+            playAudioWaitingCall: function () {
+                $(document).ready(function () {
+                    window.playAudioWaitingCall();
+                });
+            },
+
+            // nhạc khi thằng nhận bận
+            playAudioBusy: function () {
+                $(document).ready(function () {
+                    window.playAudioBusy();
+                });
+            },
+
+            // nhạc khi ko trả lời
+            playAudioNoanswer: function () {
+                $(document).ready(function () {
+                    window.playAudioNoanswer();
+                });
+            },
+
+            playAudioTune: function () {
+                $(document).ready(function () {
+                    window.playAudio();
+                });
+            },
+
             reloadDataRenderList: function () {
                 // this.listUserData = this.preSync;
                 this.listUserData = [];
@@ -234,18 +335,10 @@
                 console.log(this.preSync);
             },
 
-            playAudioTune: function () {
-                $(document).ready(function () {
-
-                    window.playAudio();
-                });
-
-            },
             stopAudioTune: function () {
                 $(document).ready(function () {
-                    window.pauseAudio();
+                    window.turnOffAllMusic();
                 });
-
             },
             remove_unicode: function (str) {
                 str = str.toLowerCase();
@@ -262,51 +355,6 @@
                 str = str.replace(/^\-+|\-+$/g, "");
 
                 return str;
-            },
-            // nguời gọi hủy 
-
-            // danh sách người dùng
-
-            // check userOnline
-            mergeArrayObject: function (arr1, arr2) {
-                console.log(arr1, 'listUserDatabase')
-                console.log(arr2, 'listUserOnline')
-                this.dataUserInfo = JSON.parse(localStorage.getItem("dataUserInfo"));
-
-                return _.map(arr1, function (obj) {
-                    return _.assign(obj, _.find(arr2, {
-                        id: obj.id
-                    }));
-                })
-                // _.map(arr1, item1 => {
-                //     _.map(arr2, item2 => {
-                //         if (item1.name == item2.name) {
-                //             item1.socketId = item2.socketId;
-                //             item1.status = item2.status
-                //         }else{
-                //             item1.status = ""
-
-                //         }
-
-                //         if (this.dataUserInfo.name == item2.name) {
-                //             this.dataUserInfo.socketId = item2.socketId;
-                //         }
-                //     })
-                // })
-
-                localStorage.setItem("dataUserInfo", JSON.stringify(this.dataUserInfo));
-                this.preSync = arr1;
-                console.log(arr1, 'data mutation')
-                this.reloadDataRenderList();
-            },
-
-            loginJitsi: function () {
-                console.log(this.nameRoom);
-                // window.location.href= siteUrl + '/videoJitsi?nameRoom=' + this.nameRoom ;
-                // window.open(siteUrl + '/videoJitsi?nameRoom=' + this.nameRoom);
-                // window.open(siteUrl + '/test?nameRoom=' + this.nameRoom, "myWindow", "width='100%',height='100%'");
-                var win = window.open(siteUrl + '/test?nameRoom=' + this.nameRoom, '_blank');
-                // win.focus();
             },
 
             // hiển thị modal nhận cuộc gọi
@@ -327,6 +375,8 @@
                     userNameB: dataUser.name,
                     userIdB: dataUser.id
                 });
+                this.playAudioConnecting();
+                this.statusCallModal = "Đang kết nối với người gọi"
             },
 
             notification: function () {
@@ -366,7 +416,11 @@
             // khi A gọi lâu quá ko gọi trả lời
             checkFinishedCall: function (data) {
                 console.log('return data', data)
-                this.finishedCallUrl = data;
+                if (data == true) {
+
+                } else {
+                    this.finishedCallUrl = data;
+                }
             },
 
             finishedCall: function () {
@@ -375,6 +429,10 @@
                     partnerId: this.userReceiveCall.id
                 });
 
+            },
+            // người gọi hủy cuộc gọi;
+            cancelCall: function () {
+                this.stopAudioTune();
             }
         },
         components: {

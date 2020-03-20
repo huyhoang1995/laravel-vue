@@ -103,6 +103,7 @@
 
                 } else {
                     // người gọi từ chối
+                    this.retFunc(true)
                     myNotify.success("Bạn đã từ chối cuộc gọi");
                     console.log('thông báo thằng B từ chối')
                 }

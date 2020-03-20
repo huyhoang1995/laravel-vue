@@ -21,12 +21,12 @@
                                     <b>{{currentUserInfo.name}}</b>
                                 </p>
                                 <p>Đang chờ người khác tham gia cuộc gọi</p>
+                                <p>{{dataStatusCall}}</p>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer" style="text-align: center">
-                    <button @click="testMethod()">Test</button>
                     <button @click="cancelCall()" style="font-size: 30px;" type="button" class="btn btn-danger btn-icon btn-circle fa fa-phone"
                         data-dismiss="modal"></button>
                 </div>
@@ -38,12 +38,15 @@
     import config from '../../config';
 
     const CallModal = {
-        props: ["id", "userReceiveCall", ],
+        props: ["id", "userReceiveCall", "statusCallModal","retFunc" ],
 
         created: function () {
             var app = this;
             this.$watch("userReceiveCall", function (newVal, oldVal) {
                 app.userReceiveCallInfo = Object.assign({}, newVal);
+            });
+            this.$watch("statusCallModal", function (newVal, oldVal) {
+                app.dataStatusCall = newVal;
             });
             app.currentUserInfo = JSON.parse(localStorage.getItem("dataUserInfo"));
 
@@ -55,6 +58,7 @@
 
         data: function () {
             return {
+                dataStatusCall : "",
                 userReceiveCallInfo: {
                 },
                 currentUserInfo: {
@@ -63,15 +67,14 @@
         },
 
         methods: {
-            testMethod:function(){
-                console.log(this.$dataTest.value);
-            },
+
 
             cancelCall: function () {
                  this.$socketServer.socket.emit(config.socket.cancelCall, {
                     userIdA: this.currentUserInfo.id,
                     userIdB: this.userReceiveCallInfo.id
                 });
+                this.retFunc();
             },
         }
     };
