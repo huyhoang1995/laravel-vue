@@ -70,6 +70,9 @@
             },
 
             logout: function () {
+                const token = localStorage.getItem('FirebaseToken');
+                    // xoa token
+                localStorage.removeItem('FirebaseToken');
                 service.jitsiService.action.logout().then(resp => {
                     this.$socketServer.socket.disconnect();
 

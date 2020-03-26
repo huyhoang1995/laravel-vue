@@ -108,24 +108,25 @@ let firebaseConfig = {
     projectId: "callkeep-a0cea",
     storageBucket: "callkeep-a0cea.appspot.com",
     messagingSenderId: "946243652799",
-    appId: "1:946243652799:web:007a2cb7bb01a7d0cc0a0a",
-    measurementId: "G-H7D3M3W49P"
+    appId: "1:946243652799:web:6e15884c9369eeb7cc0a0a",
+    measurementId: "G-JHJ0W68LJ2"
   };
 
 firebase.initializeApp(firebaseConfig);
-askForPermissioToReceiveNotifications();
 
-askForPermissioToReceiveNotifications = async () => {
+const askForPermissioToReceiveNotifications = async () => {
     try {
-      const messaging = firebase.messaging();
-      await messaging.requestPermission();
-      const token = await messaging.getToken();
-      console.log('Token:', token);
-      
+      global.messaging = firebase.messaging();
+      const token = localStorage.getItem('FirebaseToken');
+      if(!token){
+        const newToken = await messaging.getToken();
+        localStorage.setItem('FirebaseToken', newToken)
+      }
     } catch (error) {
       console.error(error);
     }
   }
+  askForPermissioToReceiveNotifications();
 // vue socket
 // import openSocket from 'socket.io-client';
 // Vue.prototype.$socket = openSocket('http://localhost:3003');

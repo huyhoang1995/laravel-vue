@@ -55,7 +55,7 @@ export default {
     
     },
     mounted() {
-
+        
     },
     data: function() {
         return {
@@ -89,8 +89,9 @@ export default {
         loginJitsi: function() {
             var param = service.jitsiService.data.login(this.account, this.password);
             service.jitsiService.action.login(param).then((resp) => {
-                console.log(resp);
                 if (resp.data.token) {
+                    const token = localStorage.getItem('FirebaseToken');
+                    // luu token
                     window.location.href = siteUrl + '/?#/jitsiLogin';
                 }
             }).catch((err) => {

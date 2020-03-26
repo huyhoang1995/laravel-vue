@@ -131,9 +131,10 @@ $(document).ready(function() {
 
 import config from "../config";
 import openSocket from "socket.io-client";
+
 export default {
   created() {
-    this.$socketServer.socket = openSocket("http://172.16.20.89:3003");
+    this.$socketServer.socket = openSocket("http://172.16.20.192:3003");
   },
   mounted() {
     // this.getUserOnline();
@@ -175,7 +176,7 @@ export default {
      service.jitsiService.action
       .listUser()
       .then(resp => {
-        alert(1);
+        // alert(1);
         arr1 = resp.data;
         this.$socketServer.socket.emit(config.socket.usersOnline);
       })
@@ -184,7 +185,21 @@ export default {
       });
 
     // khi người dùng nhận được cuộc gọi
-    this.$socketServer.socket.on(config.socket.connecting, data => {
+    global.messaging.onMessage(payload => {
+      console.log(payload)
+      if(payload.data.endCall){
+        this.closeReceiveCallModal();
+        this.stopAudioTune();
+        return;
+      }
+
+      const userInfoA = JSON.parse(payload.data.userA);
+      const data = {
+        userIdA: userInfoA.userIdA,
+        socketIdA: userInfoA.socketIdA,
+        userNameA: userInfoA.userNameA,
+        userIdB: JSON.parse(payload.data.userB).userIdB,
+      }
       // console.log(data, 'data on socketCall')
       this.openReceiveCallModal(data);
       this.$socketServer.socket.emit(config.socket.connected, {
