@@ -411,7 +411,7 @@ export default {
             }
         },
         onRemoteTrack: function(track) {
-
+            console.log(track, 'DataTrackRemote')
             // handleVideoTrack(track);
 
             if (track.isLocal()) {
@@ -467,7 +467,13 @@ export default {
 
             this.renderVideoMain(track,participant);
             
-           
+           this.checkElementLength(`${participant}`)
+        },
+        checkElementLength:function(data){
+            var element = $(`.${data}`).length;
+            if(element > 1){
+               $(`.${data}`).not(':last').remove();
+            }            
         },
         removeClassMicro:function(track,participant){
             $( document ).ready(function() {
@@ -479,6 +485,7 @@ export default {
 
         },
         renderVideoMain: function(track,participant) {
+            
             $('.center-video').append(
                 `<video autoplay='1' class="view-call-main-big bigVideo" id='' />`
             );
@@ -506,7 +513,6 @@ export default {
         },
 
         finishedCall: function() {
-            console.log(this.$testData.color, 'color mutation')
             this.$socketServer.socket.emit(config.socket.endCall, {
                 myUserId: myUserId,
                 partnerId: partnerId

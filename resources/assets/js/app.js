@@ -99,7 +99,33 @@ import VideoChatComponent from "./components/VideoChatComponent.vue";
 import AvatarComponent from './components/AvatarComponent.vue';
 Vue.prototype.$socketServer = {socket :''};
 Vue.prototype.$testData = {color :'red'};
+import firebase from 'firebase';
 
+let firebaseConfig = {
+    apiKey: "AIzaSyB1BkM5qMRqqDlKSsvSZ-gXIwjfry45018",
+    authDomain: "callkeep-a0cea.firebaseapp.com",
+    databaseURL: "https://callkeep-a0cea.firebaseio.com",
+    projectId: "callkeep-a0cea",
+    storageBucket: "callkeep-a0cea.appspot.com",
+    messagingSenderId: "946243652799",
+    appId: "1:946243652799:web:007a2cb7bb01a7d0cc0a0a",
+    measurementId: "G-H7D3M3W49P"
+  };
+
+firebase.initializeApp(firebaseConfig);
+askForPermissioToReceiveNotifications();
+
+askForPermissioToReceiveNotifications = async () => {
+    try {
+      const messaging = firebase.messaging();
+      await messaging.requestPermission();
+      const token = await messaging.getToken();
+      console.log('Token:', token);
+      
+    } catch (error) {
+      console.error(error);
+    }
+  }
 // vue socket
 // import openSocket from 'socket.io-client';
 // Vue.prototype.$socket = openSocket('http://localhost:3003');

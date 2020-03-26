@@ -7,7 +7,9 @@ const check = () => {
     }
 }
 const registerServiceWorker = async () => {
+    
     const swRegistration = await navigator.serviceWorker.register('service.js')
+    console.log(swRegistration,'data');
     return swRegistration
 }
 const requestNotificationPermission = async () => {
