@@ -1,3 +1,4 @@
+// var siteUrl = '{!! url("/") !!}';
 
 // 
 // urlB64ToUint8Array is a magic function that will encode the base64 public key
@@ -28,7 +29,7 @@ self.addEventListener('activate', async () => {
     // This will be called only once when the service worker is activated.
     try {
         const applicationServerKey = urlB64ToUint8Array(
-            'BBNnoknpbg6ajri4rSrYZnyATKUvqIIjKDbfDTYRj0iTZdXb48bWNUD4PMi3rhIqD_e9zCDffhyXxds1LP5Nfg8'
+            'BI_xwT_BB3Yx4LJpPePW2thXStg4jDffvthy2wVK1PKv_xtlKokofXacWnvCgeqnI7VlClAqorg9S6BoIVBwyPc'
         )
         const options = { applicationServerKey, userVisibleOnly: true }
         const subscription = await self.registration.pushManager.subscribe(options)
@@ -39,19 +40,64 @@ self.addEventListener('activate', async () => {
     }
 })
 // lissten to push
-self.addEventListener("push", function (event) {
-    if (event.data) {
-        console.log("Push event!! ", event.data.text());
-        showLocalNotification("tôi gọi bạn từ public laravel-vue", event.data.text(), self.registration);
-    } else {
-        console.log("Push event but no data");
+
+self.addEventListener('push', function (event) {
+    console.log('Received a push message', event);
+    var body = '';
+    
+    var title = 'Phần mềm hội nghị truyền hình.';
+    var status = event.data.text();
+    switch (status) {
+        case 'missCall':
+            body = "Bạn có cuộc gọi nhỡ";
+            break;
+
+        default:
+            break;
     }
+    var icon = event.srcElement.registration.scope + '/images/missCall.png';
+    var tag = 'simple-push-demo-notification-tag';
+    var data = {
+        scopeUrl: event.srcElement.registration.scope
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(title, {
+            body: body,
+            icon: icon,
+            tag: tag,
+            data: data
+        })
+    );
+});
+
+self.addEventListener('notificationclick', function (event) {
+    console.log(event, 'dataEvent');
+    // var doge = event.notification.data.doge;
+    // clients.openWindow(siteUrl);
+    var url = event.notification.data.scopeUrl + '#/jitsiLogin';
+    console.log(url)
+
+    event.waitUntil(clients.openWindow(url));
+
 });
 // notify
-const showLocalNotification = (title, body, swRegistration) => {
+const showLocalNotification = (title, status, swRegistration) => {
+    console.log(status)
+    var body = "";
+    switch (status) {
+        case 'missCall':
+            body = "Bạn có cuộc gọi nhỡ";
+            break;
+
+        default:
+            break;
+    }
     const options = {
-        body
+        body,
         // here you can add more properties like icon, image, vibrate, etc.
     };
+
     swRegistration.showNotification(title, options);
+
 };

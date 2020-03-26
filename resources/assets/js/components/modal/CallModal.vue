@@ -27,7 +27,7 @@
                     </form>
                 </div>
                 <div class="modal-footer" style="text-align: center">
-                    <button @click="cancelCall()" style="font-size: 30px;" type="button" class="btn btn-danger btn-icon btn-circle fa fa-phone"
+                    <button @click="cancelCall()" style="font-size: 30px;" type="button" class="btn btn-danger btn-icon btn-circle fa fa-times"
                         data-dismiss="modal"></button>
                 </div>
             </div>

@@ -11,21 +11,20 @@
                 <div class="modal-body">
                     <form data-parsley-validate class="form-horizontal">
                         <div class="form-group">
-                            <div class="col-sm-12">
-                                <span>
-                                    <img style="width:50px;height:50px" v-bind:src="'./images/avt.png'" alt="">
-                                </span>
-                                <span>
-                                    <b>{{userCallInfo.userNameA}}</b> đang gọi...</span>
-
+                            <div class="col-sm-12" style="text-align:center">
+                                <img class="img-circle" style="width:200px;height:200px" v-bind:src="'./images/avt.png'" alt="">
+                                <br/>
+                                <br/>
+                                <p><b>{{userCallInfo.userNameA}}</b> đang gọi...</p>
                             </div>
-
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" @click="reactCallAnswer(false)">Đóng</button>
-                    <button type="button" class="btn btn-primary" @click="reactCallAnswer(true)">Trả lời</button>
+                <div class="modal-footer" style="text-align:center">
+                    <button type="button" style="font-size: 30px;" class="btn btn-success btn-icon btn-circle fa fa-video-camera" @click="reactCallAnswer(true)">
+                    </button>
+                    <button type="button" style="font-size: 25px;" class="btn btn-danger btn-icon btn-circle fa fa-times" @click="reactCallAnswer(false)">
+                    </button>
                 </div>
             </div>
         </div>
@@ -97,14 +96,15 @@
                     console.log(this.$testData.color, 'color oringinal');
                     this.$testData.color = 'green 123';
                     console.log('trả lời cuộc gọi')
-                    var urlData= window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(currentUserInfo.name) +'&myUserId=' + currentUserInfo.id  + '&partnerId=' +  this.userCallInfo.userIdA , '_blank');
+                    var urlData= window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(currentUserInfo.name) +'&myUserId=' + currentUserInfo.id
+                      + '&partnerId=' +  this.userCallInfo.userIdA  + '&userIdA='  + this.userCallInfo.userIdA + '&userIdB=' + currentUserInfo.id  , '_blank');
 
                     this.retFunc(urlData);
 
                 } else {
                     // người gọi từ chối
                     this.retFunc(true)
-                    myNotify.success("Bạn đã từ chối cuộc gọi");
+                    myNotify.info("Bạn đã từ chối cuộc gọi");
                     console.log('thông báo thằng B từ chối')
                 }
 

@@ -11,6 +11,12 @@ const myNotify = {
         var type = 'danger';
         myNotify.showNotify(type, icon, message, time);
     },
+    info: function(message){
+        var icon = 'fa fa-info-circle';
+        var time = 1000;
+        var type = 'info';
+        myNotify.showNotify(type, icon, message, time);
+    },
     showNotify: function(type, icon, message, time){
         $.notify({
             icon: icon,

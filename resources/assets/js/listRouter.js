@@ -17,7 +17,7 @@ import JitsiLoginComponent from './components/JitsiLoginComponent.vue';
 export default [
 	{
 		path: '/',
-		component: ChatComponent,
+		component: JitsiLoginComponent,
 		name: 'example'
 	},
 	// {

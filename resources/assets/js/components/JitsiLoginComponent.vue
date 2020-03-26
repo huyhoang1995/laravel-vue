@@ -1,7 +1,7 @@
 <template>
     <div class="row col-sm-12">
         <div class="col-sm-12">
-            <div class="panel panel-default" style="height:100vh">
+            <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 style="padding: 10px">Danh sách người dùng online</h3>
 
@@ -26,12 +26,14 @@
                                 </td>
                                 <td>
                                     <i class="btn btn-info btn-icon btn-circle fa fa-phone" title="Modal gọi đi" aria-hidden="true" @click="openCallModal(item)"></i>
-                                    <button @click="playAudioConnecting()"> bật nhạc</button>
+
+                                    <button @click="activeNotify()">activeNotify</button>
+
+                                    <!-- <button @click="playAudioConnecting()"> bật nhạc</button>
                                     <button @click="playAudioWaitingCall()"> bật nhạc</button>
                                     <button @click="playAudioBusy()"> bật nhạc</button>
-                                    <button @click="playAudioNoanswer()"> bật nhạc</button>
 
-                                    <button @click="stopAudioTune()"> tắt nhạc</button>
+                                    <button @click="stopAudioTune()"> tắt nhạc</button> -->
                                 </td>
                             </tr>
                         </tbody>
@@ -123,11 +125,8 @@
 
             var that = this;
 
-
-
             this.$socketServer.socket.on(config.socket.usersOnline, (listUserOnline) => {
 
-                console.log(listUserOnline, 'listUserSocket')
                 this.dataUserInfo = JSON.parse(localStorage.getItem("dataUserInfo"));
 
                 let arrUserOnline = [];
@@ -149,7 +148,6 @@
                 localStorage.setItem("dataUserInfo", JSON.stringify(this.dataUserInfo));
 
                 this.preSync = arr1;
-                console.log(arr1);
                 this.reloadDataRenderList();
 
             });
@@ -159,20 +157,14 @@
                 arr1 = resp.data;
             }).then(() => {
                 this.$socketServer.socket.emit(config.socket.usersOnline);
+            }).catch(err => {
+                console.log(err)
             })
-                .catch(err => {
-                    console.log(err)
-                })
-
-
-
-
 
             // khi người dùng nhận được cuộc gọi
             this.$socketServer.socket.on(config.socket.connecting, (data) => {
-
-
-                // console.log(data, 'data on socketCall')
+                this.playAudioWaitingCall();
+                console.log(data, 'data on socketCall')
                 this.openReceiveCallModal(data)
                 this.$socketServer.socket.emit(config.socket.connected, {
                     userIdA: data.userIdA,
@@ -184,62 +176,63 @@
                 // this.notifyMe();
             });
 
+            var that = this;
             // người gọi kết nối thành công
             this.$socketServer.socket.on(config.socket.connected, (data) => {
                 if (data) {
-
-                    this.stopAudioTune();
-                    this.playAudioWaitingCall();
+                    that.stopAudioTune();
+                    that.playAudioWaitingCall();
 
                     this.statusCallModal = "Đã kết nối thành công";
                 } else {
-
+                    that.stopAudioTune();
+                    $("#" + that.idCallModal).modal("close");
                 }
             });
             var that = this;
-            this.$socketServer.socket.on(config.socket.timeOutCalling, () => {
-
+            this.$socketServer.socket.on(config.socket.timeOutCalling, (data) => {
+                console.log(data, 'data timeout');
                 that.stopAudioTune();
-                that.playAudioNoanswer();
-                setTimeout(function () {
-                    that.stopAudioTune();
-                    $("#" + that.idCallModal).modal("hide");
+
+                if (data) {
+                    that.playAudioNoanswer();
+                    setTimeout(function () {
+                        that.stopAudioTune();
+                        $("#" + that.idCallModal).modal("hide");
+                    }, 2000);
+                } else {
                     $("#" + that.idModal).modal("hide");
-                }, 2000);
+                    that.getNotify(config.statusCall.missCall);
 
-
+                }
             })
 
             // khi người gọi hủy cuộc gọi
-            this.$socketServer.socket.on(config.socket.cancelCall, () => {
-                this.closeReceiveCallModal();
-                myNotify.success("Bạn đã bỏ lỡ cuộc gọi");
+            this.$socketServer.socket.on(config.socket.cancelCall, (data) => {
+                console.log(data, 'data cancel')
+                that.closeReceiveCallModal();
+                that.stopAudioTune();
+                that.getNotify(config.statusCall.missCall);
+                // myNotify.success("Bạn đã bỏ lỡ cuộc gọi");
             });
 
             // khi người dùng xử lý cuộc gọi
             this.$socketServer.socket.on(config.socket.statusAnswer, (data) => {
                 this.stopAudioTune();
 
-                console.log(data, 'check status answer')
-
                 if (data.status) {
-                    console.log('thằng B trả lời')
-
-                    this.finishedCallUrlCall = window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(this.userReceiveCall.name) + '&myUserId=' + this.dataUserInfo.id + '&partnerId=' + this.userReceiveCall.id, '_blank');
+                    that.finishedCallUrlCall = window.open(siteUrl + '/test?nameRoom=' + that.remove_unicode(that.userReceiveCall.name) + '&myUserId=' + that.dataUserInfo.id
+                        + '&partnerId=' + that.userReceiveCall.id + '&userIdA=' + that.dataUserInfo.id + '&userIdB=' + that.userReceiveCall.id, '_blank');
                     // this.$windowChatCall = window.open(siteUrl + '/test?nameRoom=' + this.remove_unicode(this.userReceiveCall.name)  +'&myUserId=' + this.dataUserInfo.id+ '&partnerId=' + this.userReceiveCall.id, "myWindow", "width='100%',height='100%'");
-                    $("#" + this.idCallModal).modal("hide");
+                    $("#" + that.idCallModal).modal("hide");
 
                 } else {
                     that.playAudioBusy()
-
                     setTimeout(function () {
                         $("#" + that.idCallModal).modal("hide");
                         that.stopAudioTune();
-
                     }, 2000);
-
-                    myNotify.success("Người dùng bận");
-                    console.log('thằng B bận')
+                    myNotify.info("Người dùng bận");
                 }
 
             });
@@ -254,9 +247,6 @@
             var that = this;
 
             this.$socketServer.socket.on(config.socket.endCall, () => {
-                console.log('data endCall');
-                console.log(that.finishedCallUrlCall)
-                console.log(that.finishedCallUrl)
 
                 try {
                     that.finishedCallUrl.close();
@@ -294,6 +284,15 @@
         },
 
         methods: {
+
+            getNotify: function (data) {
+
+                service.jitsiService.action.getNotify(data).then(resp => {
+                    console.log(resp, 'active notify');
+                }).catch(err => {
+                    console.log(err);
+                })
+            },
             // nhạc khi bắt đầu kết nối
             playAudioConnecting: function () {
                 $(document).ready(function () {
@@ -332,7 +331,6 @@
                 // this.listUserData = this.preSync;
                 this.listUserData = [];
                 this.listUserData = this.preSync;
-                console.log(this.preSync);
             },
 
             stopAudioTune: function () {
@@ -433,7 +431,9 @@
             // người gọi hủy cuộc gọi;
             cancelCall: function () {
                 this.stopAudioTune();
-            }
+            },
+
+
         },
         components: {
             receiveCallModal: require("@component/modal/ReceiveCallModal.vue"),

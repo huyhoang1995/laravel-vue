@@ -12,7 +12,7 @@ config.redis = {
 }
 
 config.socket = {
-     login: 'login',
+    login: 'login',
     disconnect: 'disconnect',
     usersOnline: 'usersOnline',
     connecting: "_connecting",
@@ -23,7 +23,13 @@ config.socket = {
     hideModalReceiveCall: 'hideModalReceiveCall',
     outOfRoom: 'outOfRoom',
     endMyCall: 'endMyCall',
-    endCall: 'endCall'
+    endCall: 'endCall',
+
+    // clientConfig
+    serverSocket: 'http://localhost:3003'
+}
+config.statusCall = {
+    missCall: 'missCall',
 }
 export default config;
 
