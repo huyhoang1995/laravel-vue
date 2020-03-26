@@ -32,6 +32,7 @@ window.service = {
     itemService: require('@libs/service/itemService').default,
     matrixService: require('@libs/service/matrixService').default,
     jitsiService: require('@libs/service/jitsiService').default,
+    tokenService: require('@libs/service/tokenService').default,
 }
 
 

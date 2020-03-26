@@ -88,11 +88,15 @@ export default {
         },
         loginJitsi: function() {
             var param = service.jitsiService.data.login(this.account, this.password);
+            
             service.jitsiService.action.login(param).then((resp) => {
                 if (resp.data.token) {
-                    const token = localStorage.getItem('FirebaseToken');
+                    localStorage.setItem('token', resp.data.token)
+                    service.tokenService.action.insertToken().then(res => {
+
+                    })
                     // luu token
-                    window.location.href = siteUrl + '/?#/jitsiLogin';
+                    // window.location.href = siteUrl + '/?#/jitsiLogin';
                 }
             }).catch((err) => {
                 console.log(err);
