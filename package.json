@@ -27,7 +27,7 @@
         "jitsi-meet-wrapper": "0.0.6",
         "lodash.uniqueid": "^4.0.1",
         "matrix-bot-sdk": "^0.3.9",
-        "matrix-js-sdk": "^2.3.0",
+        "matrix-js-sdk": "^19.7.0",
         "moment": "^2.22.2",
         "net": "^1.0.2",
         "npm-watch": "^0.6.0",
